@@ -28,6 +28,7 @@ h1 i, h2 i { color:var(--red); font-style:normal; }
 .site-nav button, .toggles button, .camera-controls button { position:relative; min-height:40px; border:0; background:none; padding:.4rem .75rem; font:500 .74rem/1 var(--label); letter-spacing:.14em; text-transform:uppercase; white-space:nowrap; }
 .site-nav button::after { content:''; position:absolute; left:.75rem; right:.75rem; bottom:.35rem; height:2px; background:var(--sec); transform:scaleX(0); transform-origin:left; transition:transform .35s var(--ease-out); }
 .site-nav button:hover::after, .site-nav button:focus-visible::after { transform:scaleX(1); }
+.nav-short { display:none; }
 .toggles { display:flex; gap:.3rem; } .toggles .icon { display:none; }
 .toggles button { border:1px solid var(--line); border-radius:99px; padding:.4rem .8rem; color:var(--muted); transition:background .2s, color .2s, border-color .2s; }
 .toggles button:hover { border-color:var(--ink); color:var(--ink); }
@@ -376,11 +377,12 @@ h1 i, h2 i { color:var(--red); font-style:normal; }
   .brand { font-size:1.6rem; min-height:38px; }
   .toggles { margin-left:auto; } .toggles button { width:38px; height:38px; min-height:0; padding:0; letter-spacing:0; font-size:.85rem; } .toggles .label { display:none; } .toggles .icon { display:inline; }
   .site-header { overflow:hidden; }
-  .site-nav { order:3; flex:1 1 100%; min-width:0; margin:0; overflow-x:auto; scrollbar-width:none; }
-  .site-nav button { font-size:.66rem; padding:.35rem .45rem; min-height:34px; }
+  .site-nav { order:3; flex:1 1 100%; min-width:0; margin:0; display:flex; justify-content:space-between; }
+  .site-nav button { font-size:.66rem; letter-spacing:.1em; padding:.35rem .3rem; min-height:36px; } .site-nav button::after { left:.3rem; right:.3rem; }
+  .nav-long { display:none; } .nav-short { display:inline; }
   .world-footer { padding:.3rem .4rem; } .camera-controls button { padding:.4rem .45rem; font-size:.64rem; letter-spacing:.08em; } .zoom-readout { min-width:2.8rem; }
-  .world-canvas { width:1120px; height:2420px; }
-  .world-intro { left:18px; top:26px; width:350px; }
+  .world-canvas { width:480px; height:2880px; }
+  .world-intro { left:20px; top:26px; width:440px; }
   .layered-name { font-size:6.4rem; }
   .volume-track { height:96px; width:12px; } .volume { left:calc(100% + .6rem); } .volume-value { display:none; }
   .intro-role { font-size:1.8rem; } .intro-note { font-size:.95rem; }
@@ -388,16 +390,17 @@ h1 i, h2 i { color:var(--red); font-style:normal; }
   .drag-hint { margin-top:1.4rem; font-size:1.05rem; }
   .cassy { left:auto; right:-16%; transform:none; bottom:-4%; height:40%; opacity:calc(var(--cassy-fade,1) * .55); } .cassy figcaption { display:none; }
   .minimap { display:none; }
-  .category-world { top:610px; width:1120px; height:560px; }
-  .works-heading { left:18px; width:340px; } .works-heading h2 { font-size:2.6rem; }
+  .category-world { top:520px; width:480px; height:560px; }
+  .works-heading { left:20px; width:440px; } .works-heading h2 { font-size:2.6rem; }
   .perspective-window { top:150px; height:300px; }
   .marquee-tile { width:250px; height:180px; } .marquee-tile strong { font-size:1.4rem; }
   .ticker { top:450px; } .ticker-run { font-size:3rem; }
   .world-district h2 { font-size:2.5rem; }
-  .district-games { left:18px; top:1210px; width:350px; }
-  .district-art { left:18px; top:1880px; width:350px; }
-  .district-about { left:400px; top:1210px; width:350px; }
-  .district-skills { left:400px; top:1580px; width:300px; } .district-contact { left:400px; top:1850px; width:300px; }
+  .district-games { left:20px; top:1140px; width:440px; }
+  .district-about { left:20px; top:1770px; width:440px; }
+  .district-art { left:20px; top:2110px; width:440px; }
+  .district-skills { left:20px; top:2660px; width:212px; } .district-contact { left:248px; top:2660px; width:212px; }
+  .utility-open strong { font-size:1.9rem; }
   .about-row img { width:90px; height:90px; } .about-row button { font-size:1.35rem; }
   .note-a, .note-b { display:none; }
   .story-reader { grid-template-columns:minmax(0,1fr); grid-template-rows:auto auto minmax(0,1fr) auto; grid-template-areas:"top" "nav" "plate" "foot"; padding:.6rem .6rem .7rem; gap:.5rem; }
@@ -415,7 +418,28 @@ h1 i, h2 i { color:var(--red); font-style:normal; }
   .hide-sm { display:none; }
   .calling-card { padding:1.4rem; }
 }
-@media (max-width:360px) { .chapter-track { display:none; } .layered-name { font-size:5.4rem; } .intro-role { font-size:1.55rem; } .camera-controls button { padding-inline:.35rem; } }
+@media (max-width:360px) { .chapter-track { display:none; } .camera-controls button { padding-inline:.35rem; } }
+
+/* ============ Lite mode (phones / low-power): keep the look, drop the expensive parts ============ */
+.lite .grain { display:none; }
+.lite .contours g, .lite .cassy-ring, .lite .link-path { animation:none; }
+.lite .link-pulse { display:none; }
+.lite .site-header, .lite .world-footer { backdrop-filter:none; background:var(--paper); }
+.lite .character-media img { filter:none; }
+.lite .cassy { filter:none; transition:opacity .6s; }
+.lite .world-lens { transform:none !important; }
+.lite .world-canvas, .lite .dolly .world-canvas { filter:none; transition:none; }
+.lite .camera-moving .world-canvas { transition:transform .6s var(--ease-out); }
+.lite .world-intro, .lite .world-district { transform:none; transform-style:flat; }
+.lite .world-district > * { transform:none !important; }
+.lite .world-district::after { display:none; }
+.lite .world-district { box-shadow:0 1px 0 var(--line),0 18px 30px -22px rgba(27,26,25,.45); }
+.lite .perspective-window { mask-image:none; -webkit-mask-image:none; perspective:none; }
+.lite .marquee-lane { transform:rotate(-2.5deg); transform-style:flat; }
+.lite .marquee-run, .lite .marquee-group, .lite .marquee-repeat { transform-style:flat; }
+.lite .marquee-tile { box-shadow:0 12px 20px -14px rgba(27,26,25,.6); }
+.lite .marquee-tile::after { background:linear-gradient(180deg,transparent 50%,rgba(27,26,25,.8)); }
+.lite .world-intro, .lite .world-district, .lite .works-heading, .lite .perspective-window, .lite .ticker, .lite .world-note, .lite .world-links { translate:none; }
 
 /* ============ Reduced motion ============ */
 @media (prefers-reduced-motion:reduce) {

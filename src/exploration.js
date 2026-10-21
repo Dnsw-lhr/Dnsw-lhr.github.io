@@ -8,6 +8,7 @@ export function initializeExploration({ stage, root, reduced, isBlocked }) {
   const world = () => ({ width: canvas.offsetWidth, height: canvas.offsetHeight });
   const viewport = () => ({ width: stage.clientWidth, height: stage.clientHeight });
   const small = () => stage.clientWidth < 700;
+  const lite = document.documentElement.classList.contains('lite');
   let camera = { x: 0, y: 0, scale: 1 }, movingTimer, suppress = false, pan, pinch, inertia;
   const pointers = new Map();
 
@@ -34,7 +35,7 @@ export function initializeExploration({ stage, root, reduced, isBlocked }) {
   const lens = stage.querySelector('.world-lens');
   let last = { ...camera }, homeCamera = { ...camera }, tilt = { x: 0, y: 0 }, leanFrame = null;
   function lean(dx, dy) {
-    if (reduced.matches || root.classList.contains('motion-paused')) return;
+    if (lite || reduced.matches || root.classList.contains('motion-paused')) return;
     // UI lags behind the drag, then springs back with a little overshoot.
     spring.vx = Math.max(-6, Math.min(6, spring.vx - dx * .02)); spring.vy = Math.max(-6, Math.min(6, spring.vy - dy * .02)); wake();
     tilt.x = Math.max(-7, Math.min(7, tilt.x * .6 + dx * .05)); tilt.y = Math.max(-5, Math.min(5, tilt.y * .6 - dy * .04));
@@ -55,7 +56,7 @@ export function initializeExploration({ stage, root, reduced, isBlocked }) {
     spring.x = Math.max(-40, Math.min(40, spring.x + spring.vx)); spring.y = Math.max(-40, Math.min(40, spring.y + spring.vy));
     if (still) { mouse.tx = mouse.ty = 0; }
     mouse.x += (mouse.tx - mouse.x) * .08; mouse.y += (mouse.ty - mouse.y) * .08;
-    root.style.setProperty('--ui-x', `${(mouse.x * 12 + spring.x).toFixed(2)}px`); root.style.setProperty('--ui-y', `${(mouse.y * 9 + spring.y).toFixed(2)}px`);
+    stage.style.setProperty('--ui-x', `${(mouse.x * 12 + spring.x).toFixed(2)}px`); stage.style.setProperty('--ui-y', `${(mouse.y * 9 + spring.y).toFixed(2)}px`);
     const moving = Math.abs(spring.x) + Math.abs(spring.y) + Math.abs(spring.vx) + Math.abs(spring.vy) > .05 || Math.abs(mouse.tx - mouse.x) + Math.abs(mouse.ty - mouse.y) > .002;
     uiFrame = moving ? requestAnimationFrame(float) : null;
   }
@@ -86,7 +87,7 @@ export function initializeExploration({ stage, root, reduced, isBlocked }) {
   function centerOn(target, scale) { const v = viewport(); return { x: v.width / 2 - (target.x + target.width / 2) * scale, y: v.height / 2 - (target.y + target.height / 2) * scale }; }
   function home(animate = true) {
     const v = viewport();
-    const scale = small() ? Math.min(1, (v.width - 8) / 376) : Math.min(1, (v.width - 40) / 1400, (v.height - 20) / 820);
+    const scale = small() ? Math.min(1, v.width / 480) : Math.min(1, (v.width - 40) / 1400, (v.height - 20) / 820);
     camera = { x: 0, y: 0, scale: Math.max(.3, scale) }; homeCamera = constrain(camera, viewport(), world()); paint(animate);
   }
   function focusDistrict(id, chapter = 0) {
@@ -108,10 +109,11 @@ export function initializeExploration({ stage, root, reduced, isBlocked }) {
   // Drag with release inertia so the world glides a little after you let go.
   stage.addEventListener('pointerdown', event => {
     if (event.button !== 0 || isBlocked() || pointers.size >= 2 || event.target.closest('.minimap,.volume')) return;
-    if (event.target.closest('.world-district') && !event.target.closest('.district-projects,.utility-open,.panel-more,.about-row')) return; // panels drag themselves
+    if (event.pointerType === 'mouse' && event.target.closest('.world-district') && !event.target.closest('.district-projects,.utility-open,.panel-more,.about-row')) return; // with a mouse, panels drag themselves
     cancelAnimationFrame(inertia); getSelection()?.removeAllRanges();
     if (pointers.size && event.pointerType === 'mouse') { pointers.clear(); pan = null; pinch = null; }
     suppress = false; pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (event.pointerType !== 'mouse') try { stage.setPointerCapture(event.pointerId); } catch {}
     if (pointers.size === 1) pan = { x: event.clientX, y: event.clientY, camera: { ...camera }, dragging: false, vx: 0, vy: 0, lx: event.clientX, ly: event.clientY, t: event.timeStamp };
     else { const [a, b] = [...pointers.values()], rect = stage.getBoundingClientRect(); pinch = { camera: { ...camera }, distance: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)), point: { x: (a.x + b.x) / 2 - rect.left, y: (a.y + b.y) / 2 - rect.top } }; suppress = true; }
   });
@@ -143,7 +145,10 @@ export function initializeExploration({ stage, root, reduced, isBlocked }) {
     else { if (pan?.dragging && event.type === 'pointerup' && event.timeStamp - pan.t < 80) glide(pan.vx, pan.vy); pan = null; stage.classList.remove('is-dragging'); setTimeout(() => suppress = false, 0); }
   }
   window.addEventListener('blur', () => { pointers.clear(); pan = null; pinch = null; suppress = false; stage.classList.remove('is-dragging'); });
-  window.addEventListener('pointerup', end); window.addEventListener('pointercancel', end); stage.addEventListener('lostpointercapture', end);
+  window.addEventListener('pointerup', end); window.addEventListener('pointercancel', end);
+  // Touch pointers start implicitly captured by the touched child; moving that capture to the stage fires a
+  // bubbling lostpointercapture from the child. Only a capture lost by the stage itself ends the drag.
+  stage.addEventListener('lostpointercapture', event => { if (event.target === stage) end(event); });
   stage.addEventListener('click', event => { if (suppress) { event.preventDefault(); event.stopImmediatePropagation(); } }, true);
   stage.addEventListener('wheel', event => {
     if (isBlocked()) return; event.preventDefault(); cancelAnimationFrame(inertia);
@@ -175,6 +180,7 @@ export function initializeExploration({ stage, root, reduced, isBlocked }) {
   // After the glass breaks: start close and blurred, then pull the camera back to the start.
   function dollyIn() {
     if (reduced.matches) return home(false);
+    if (lite) return home(true);
     const v = viewport(); home(false);
     camera = zoomAt(camera, 1.35, { x: v.width * .35, y: v.height * .4 }); stage.classList.add('dolly'); paint(false);
     requestAnimationFrame(() => requestAnimationFrame(() => { home(true); setTimeout(() => stage.classList.remove('dolly'), 60); }));

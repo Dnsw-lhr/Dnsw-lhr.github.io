@@ -3,6 +3,10 @@ import { storyMedia } from './story-media.js';
 import { initializeWorld } from './world.js';
 import { esc as text } from './ransom.js';
 
+// Lite mode for phones/tablets and low-power devices: same site, fewer expensive effects. (?lite / ?full to force.)
+const query = new URLSearchParams(location.search);
+const lite = query.has('lite') || (!query.has('full') && (matchMedia('(pointer: coarse)').matches || (navigator.hardwareConcurrency || 8) <= 2));
+document.documentElement.classList.toggle('lite', lite);
 const safeUrl = (value = '') => /^(https?:\/\/|mailto:|\.\/assets\/)/i.test(value) ? text(value) : '';
 const links = (items = []) => items.filter(item => safeUrl(item.url)).map(item => `<a class="inline-link" href="${safeUrl(item.url)}" target="_blank" rel="noopener noreferrer">${text(item.label)} <span aria-hidden="true">↗</span></a>`).join('');
 const paragraphs = value => String(value).split(/\n\s*\n/).map(p=>`<p>${text(p).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')}</p>`).join('');
@@ -29,11 +33,11 @@ const storyById = new Map(stories.map(story => [story.id, story]));
 
 // Each section gets one of four colors: ink, paper, red, orange (white text on red, orange and ink).
 const sections = [
-  {id:'story', label:'About me', color:'#d9564b', ink:'#fffaf2'},
-  {id:'games', label:'My games', color:'#1b1a19', ink:'#fffaf2'},
-  {id:'art', label:'My art', color:'#e2803f', ink:'#fffaf2'},
-  {id:'skills', label:'My toolkit', color:'#f2ede4', ink:'#1b1a19'},
-  {id:'contact', label:'Contact me', color:'#d9564b', ink:'#fffaf2'},
+  {id:'story', short:'About', label:'About me', color:'#d9564b', ink:'#fffaf2'},
+  {id:'games', short:'Games', label:'My games', color:'#1b1a19', ink:'#fffaf2'},
+  {id:'art', short:'Art', label:'My art', color:'#e2803f', ink:'#fffaf2'},
+  {id:'skills', short:'Toolkit', label:'My toolkit', color:'#f2ede4', ink:'#1b1a19'},
+  {id:'contact', short:'Contact', label:'Contact me', color:'#d9564b', ink:'#fffaf2'},
 ];
 const firstPage = (id, prefix) => storyById.get(id).pages.findIndex(page => page.label.startsWith(prefix));
 const img = (src, alt = '') => `<img src="${safeUrl(src)}" alt="${text(alt)}" draggable="false" loading="lazy" decoding="async"/>`;
@@ -58,7 +62,7 @@ document.querySelector('#app').innerHTML = `
 <div class="portfolio-world awaiting-entry">
   <header class="site-header">
     <button class="brand" type="button" data-home aria-label="${text(profile.displayName)} — back to the start">${text(profile.displayName)}<span aria-hidden="true">.</span></button>
-    <nav class="site-nav" aria-label="Portfolio">${sections.map(s=>`<button type="button" data-open-story="${s.id}" style="--sec:${s.color}">${text(s.label)}</button>`).join('')}</nav>
+    <nav class="site-nav" aria-label="Portfolio">${sections.map(s=>`<button type="button" data-open-story="${s.id}" style="--sec:${s.color}" aria-label="${text(s.label)}"><span class="nav-long" aria-hidden="true">${text(s.label)}</span><span class="nav-short" aria-hidden="true">${text(s.short)}</span></button>`).join('')}</nav>
     <div class="toggles"><button type="button" class="sfx-toggle" aria-pressed="false">Sound off</button><button class="motion-toggle" type="button" aria-pressed="false">Pause motion</button></div>
   </header>
 

@@ -24,6 +24,7 @@ export function initializeWorld({ stories, sections }) {
   const video = art.querySelector('video');
   const motion = document.querySelector('.motion-toggle');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const lite = document.documentElement.classList.contains('lite');
   const sfx = createSfx(document.querySelector('.sfx-toggle'));
   const byId = new Map(stories.map(story => [story.id, story]));
   const sectionById = new Map(sections.map(section => [section.id, section]));
@@ -52,7 +53,7 @@ export function initializeWorld({ stories, sections }) {
   });
   showLevel(sfx.level);
   // Buffer the local loop during the conversation, without starting motion.
-  if (!reduced.matches) { video.preload = 'auto'; video.src = video.dataset.src; video.load(); }
+  if (!reduced.matches && !lite) { video.preload = 'auto'; video.src = video.dataset.src; video.load(); }
 
   // Gentle 3D tilt toward the mouse on panels and the intro.
   document.querySelectorAll('[data-tilt],.world-intro').forEach(element => {
@@ -227,13 +228,13 @@ export function initializeWorld({ stories, sections }) {
   function syncMotion() {
     const stopped = paused || reduced.matches || document.hidden || Boolean(activeStory) || (entering() && !openingArt);
     root.classList.toggle('motion-paused', stopped);
-    links.pause(paused || reduced.matches || document.hidden);
+    links.pause(paused || reduced.matches || document.hidden || lite);
     reader.classList.toggle('motion-paused', paused || reduced.matches);
     const label = reduced.matches ? 'Motion reduced' : paused ? 'Resume motion' : 'Pause motion';
     motion.innerHTML = `<span class="icon" aria-hidden="true">${paused || reduced.matches ? '▶' : '❚❚'}</span><span class="label">${label}</span>`; motion.setAttribute('aria-label', label);
     motion.disabled = reduced.matches;
     motion.setAttribute('aria-pressed', String(paused || reduced.matches));
-    if (stopped || artFailed || !cassyVisible) { video.pause(); art.classList.remove('video-ready'); return; }
+    if (stopped || artFailed || lite || !cassyVisible) { video.pause(); art.classList.remove('video-ready'); return; }
     if (!video.getAttribute('src')) video.src = video.dataset.src;
     if (!video.paused || pendingPlay) return;
     pendingPlay = true;
@@ -277,7 +278,7 @@ export function initializeWorld({ stories, sections }) {
       // Everything but Cassy is invisible during the hitstop, then fades in slowly as the glass bursts away.
       const unveil = () => { clearTimeout(veilTimer); root.classList.remove('ui-veiled'); root.classList.add('ui-unveiling'); };
       const veilTimer = setTimeout(unveil, 4500);
-      const shattering = shatterScreen({ source: line, impact: rect ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } : null, reduced,
+      const shattering = shatterScreen({ lite, source: line, impact: rect ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } : null, reduced,
         onImpact: () => sfx.clip('impact'),
         onBurst: () => { unveil(); sfx.clip('explosion'); song.start(); explorer.dollyIn(); root.classList.add('quake'); setTimeout(() => root.classList.remove('quake'), 500); } });
       if (shattering) root.classList.add('ui-veiled'); else unveil();

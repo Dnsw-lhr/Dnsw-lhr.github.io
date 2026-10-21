@@ -2,12 +2,12 @@
 //  0ms    impact: the black screen (with its text) cracks from the point of impact, a white flash, everything freezes.
 //  600ms  explosion: every piece bursts outward toward the camera and away, fast, revealing the world.
 export const HITSTOP_MS = 600;
-export function shatterScreen({ source, impact, reduced, onImpact, onBurst, onDone }) {
+export function shatterScreen({ source, impact, reduced, onImpact, onBurst, onDone, lite = false }) {
   if (reduced.matches) return false;
   const W = innerWidth, H = innerHeight, diag = Math.hypot(W, H);
   const c = impact || { x: W / 2, y: H / 2 };
   const rand = (a, b) => a + Math.random() * (b - a);
-  const rays = 16, rings = [.05, .13, .26, .46, 1.25];
+  const rays = lite ? 10 : 16, rings = lite ? [.08, .24, .5, 1.25] : [.05, .13, .26, .46, 1.25];
   const angle0 = rand(0, Math.PI * 2);
   const angles = Array.from({ length: rays }, (_, i) => angle0 + (i + rand(-.3, .3)) * Math.PI * 2 / rays);
   const vertex = angles.map(a => rings.map((r, k) => { const rr = r * diag * (k === rings.length - 1 ? 1 : rand(.78, 1.22)); const aa = a + (k ? rand(-.08, .08) : 0); return { x: c.x + Math.cos(aa) * rr, y: c.y + Math.sin(aa) * rr }; }));
