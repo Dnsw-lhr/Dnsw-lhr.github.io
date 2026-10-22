@@ -7,7 +7,7 @@ export function initializePanels({stage,canvas,reduced,isBlocked}) {
     panel.addEventListener('pointerdown',e=>{
       if(e.button!==0||isBlocked()||e.target.closest('button')!==grip&&e.target.closest('button'))return;
       // On touch screens a swipe over a panel pans the map; panels move only by their handle.
-      if(e.pointerType!=='mouse'&&e.target.closest('button')!==grip)return;
+      if(e.pointerType!=='mouse'||document.documentElement.classList.contains('lite'))return; // no draggable boxes on phones
       e.stopPropagation();getSelection()?.removeAllRanges();stop();const scale=stage.querySelector('.world-canvas').getBoundingClientRect().width/canvas.offsetWidth;
       drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:panel.offsetLeft,top:panel.offsetTop,scale,lastX:e.clientX,lastY:e.clientY,time:e.timeStamp,vx:0,vy:0,moved:false};
       panel.setPointerCapture(e.pointerId);

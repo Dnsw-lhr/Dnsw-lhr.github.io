@@ -27,3 +27,5 @@ September 28 additions:
 October 22 additions:
 - assets/music/never-regret.mp3: owner-supplied song "Never Regret", starts at 0:01.66, the first note, so the music begins exactly on the shatter explosion; plays after the intro shatter.
 - assets/sfx/shatter-impact.mp3, shatter-explosion.mp3: cut from the owner-supplied ULTRAKILL jackhammer SFX (0:05.55 and 0:08.56).
+
+- assets/cassy-loop.webp: animated WebP made from cassy-chroma.webm (transparency kept, 420px, 15fps) for phones.

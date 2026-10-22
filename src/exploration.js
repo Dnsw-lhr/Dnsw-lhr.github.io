@@ -87,7 +87,7 @@ export function initializeExploration({ stage, root, reduced, isBlocked }) {
   function centerOn(target, scale) { const v = viewport(); return { x: v.width / 2 - (target.x + target.width / 2) * scale, y: v.height / 2 - (target.y + target.height / 2) * scale }; }
   function home(animate = true) {
     const v = viewport();
-    const scale = small() ? Math.min(1, v.width / 480) : Math.min(1, (v.width - 40) / 1400, (v.height - 20) / 820);
+    const scale = small() ? Math.min(1, (v.width - 12) / 680) : Math.min(1, (v.width - 40) / 1400, (v.height - 20) / 820);
     camera = { x: 0, y: 0, scale: Math.max(.3, scale) }; homeCamera = constrain(camera, viewport(), world()); paint(animate);
   }
   function focusDistrict(id, chapter = 0) {

@@ -54,6 +54,9 @@ export function initializeWorld({ stories, sections }) {
   showLevel(sfx.level);
   // Buffer the local loop during the conversation, without starting motion.
   if (!reduced.matches && !lite) { video.preload = 'auto'; video.src = video.dataset.src; video.load(); }
+  // Phones: Cassy loops as an animated WebP (works on iPhone, no video decoding); a still PNG while paused.
+  const poster = art.querySelector('img'), stillSrc = './assets/cassy-chroma.png', loopSrc = './assets/cassy-loop.webp';
+  if (lite && !reduced.matches) new Image().src = loopSrc;
 
   // Gentle 3D tilt toward the mouse on panels and the intro.
   document.querySelectorAll('[data-tilt],.world-intro').forEach(element => {
@@ -234,7 +237,8 @@ export function initializeWorld({ stories, sections }) {
     motion.innerHTML = `<span class="icon" aria-hidden="true">${paused || reduced.matches ? '▶' : '❚❚'}</span><span class="label">${label}</span>`; motion.setAttribute('aria-label', label);
     motion.disabled = reduced.matches;
     motion.setAttribute('aria-pressed', String(paused || reduced.matches));
-    if (stopped || artFailed || lite || !cassyVisible) { video.pause(); art.classList.remove('video-ready'); return; }
+    if (lite) { const want = stopped || !cassyVisible ? stillSrc : loopSrc; if (poster.getAttribute('src') !== want) poster.src = want; return; }
+    if (stopped || artFailed || !cassyVisible) { video.pause(); art.classList.remove('video-ready'); return; }
     if (!video.getAttribute('src')) video.src = video.dataset.src;
     if (!video.paused || pendingPlay) return;
     pendingPlay = true;
