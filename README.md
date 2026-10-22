@@ -1,6 +1,6 @@
 # Dnsw — games & art portfolio
 
-Live site: https://dnsw-lhr.github.io/Dnsw_Portfolio/
+Live site: https://dnsw-lhr.github.io/
 
 A static, buildless site: drag to explore the map, open stories from the panels or the endless strip of work. No build step — `index.html` + `src/` + `assets/`.
 
