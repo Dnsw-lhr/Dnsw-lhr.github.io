@@ -48,7 +48,7 @@ const works = [
   ...groups[0].entries.map((entry,i) => ({id:'games', chapter:i+1, title:entry.title, kind:'My games', src:thumb(entry)})),
   ...groups[1].entries.map((entry,i) => ({id:'art', chapter:i+1, title:entry.title, kind:'My art', src:thumb(entry)})),
   {id:'art', chapter:2, title:'Drawings & Communities', kind:'My art', src:'./assets/stories/drawing-02.jpg'},
-  {id:'games', chapter:1, title:'RE//SLASH', kind:'My games', src:'./assets/stories/reslash-combat.png'},
+  {id:'games', chapter:1, title:'RE//SLASH', kind:'My games', src:'./assets/stories/reslash-combat.webp'},
 ];
 const strip = focusable => `<div class="marquee-group">${works.map((work,i)=>`<button type="button" class="marquee-tile tile-${work.id}" data-open-story="${work.id}" data-story-chapter="${work.chapter}" tabindex="${focusable?0:-1}" aria-label="${text(work.kind)}: ${text(work.title)}" style="--n:${i}">${img(work.src)}<span><small>${text(work.kind)}</small><strong>${text(work.title)}</strong></span></button>`).join('')}</div>`;
 const ticker = `<span>Play</span><i>✶</i><span>Draw</span><i>✶</i><span>Make</span><i>✶</i><span>Move</span><i>✶</i>`;
@@ -68,7 +68,7 @@ document.querySelector('#app').innerHTML = `
 
   <main id="main" class="world-stage" tabindex="0" aria-label="Explore the portfolio: drag in any direction, use arrow keys, or the camera buttons">
     <div class="world-backdrop" aria-hidden="true"><svg class="contours" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g>${Array.from({length:9},(_,i)=>`<path d="M-50 ${120+i*70} C 220 ${40+i*70}, 380 ${230+i*68}, 640 ${150+i*70} S 1020 ${60+i*72}, 1260 ${170+i*66}"/>`).join('')}</g></svg><div class="grain"></div></div>
-    <div class="cassy-layer" aria-hidden="true"><figure class="cassy" aria-hidden="true"><span class="cassy-ring"></span><div class="character-media"><img src="./assets/cassy-chroma.png" alt="" draggable="false"/><video muted loop playsinline preload="none" data-src="./assets/cassy-chroma.webm" tabindex="-1"></video></div><figcaption>Cassy — fan animation, looped</figcaption></figure></div>
+    <div class="cassy-layer" aria-hidden="true"><figure class="cassy" aria-hidden="true"><span class="cassy-ring"></span><div class="character-media"><img src="./assets/cassy-chroma.webp" alt="" draggable="false"/><video muted loop playsinline preload="none" data-src="./assets/cassy-chroma.webm" tabindex="-1"></video></div><figcaption>Cassy — fan animation, looped</figcaption></figure></div>
     <div class="world-lens"><div class="world-canvas">
       <svg class="world-links" aria-hidden="true"></svg>
       <div class="dot-grid" aria-hidden="true"></div>

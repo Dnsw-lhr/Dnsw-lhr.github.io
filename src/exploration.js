@@ -9,6 +9,7 @@ export function initializeExploration({ stage, root, reduced, isBlocked }) {
   const viewport = () => ({ width: stage.clientWidth, height: stage.clientHeight });
   const small = () => stage.clientWidth < 700;
   const lite = document.documentElement.classList.contains('lite');
+  let cassyFaded = false;
   let camera = { x: 0, y: 0, scale: 1 }, movingTimer, suppress = false, pan, pinch, inertia;
   const pointers = new Map();
 
@@ -26,6 +27,7 @@ export function initializeExploration({ stage, root, reduced, isBlocked }) {
     root.style.setProperty('--cassy-y', `${reduced.matches ? 0 : Math.max(-40, Math.min(40, (camera.y - homeCamera.y) * .04))}px`);
     const fade = Math.max(.22, Math.min(1, 1 - travel * .55 - Math.max(0, homeCamera.scale - camera.scale) * 1.4));
     root.style.setProperty('--cassy-fade', fade.toFixed(3));
+    if ((fade < .45) !== cassyFaded) { cassyFaded = fade < .45; root.dispatchEvent(new CustomEvent('cassyfade')); }
     root.style.setProperty('--cassy-blur', `${reduced.matches ? 0 : ((1 - fade) * 7).toFixed(2)}px`);
     lean(camera.x - last.x, camera.y - last.y); last = { ...camera };
     updateMinimap();

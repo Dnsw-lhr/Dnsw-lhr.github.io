@@ -385,16 +385,16 @@ h1 i, h2 i { color:var(--red); font-style:normal; }
   .layered-name { font-size:11.5rem; }
   .world-intro .eyebrow { font-size:1.2rem; } .intro-role { font-size:3.2rem; } .intro-note { font-size:1.75rem; max-width:none; }
   .cta { padding:1.3rem 1.9rem; font-size:1.25rem; } .drag-hint { font-size:1.9rem; } .drag-hint svg { width:110px; height:55px; }
-  .volume-track { height:210px; width:26px; } .volume-label, .volume-value { font-size:1rem; } .volume-knob { left:-8px; right:-8px; height:6px; }
+  .volume { left:calc(100% + 1.6rem); top:52%; gap:.35rem; } .volume-track { height:120px; width:22px; } .volume-label { font-size:.95rem; } .volume-value { display:none; } .volume-knob { left:-7px; right:-7px; height:6px; }
   .world-district .eyebrow { font-size:1.1rem; } .panel-note { font-size:1.55rem; } .district-projects button span { font-size:2.1rem; }
   .panel-more { font-size:1.15rem; } .utility-open span { font-size:1.5rem; } .about-row button { font-size:2rem; padding:.7rem 1rem; }
   .works-heading span { font-size:1.2rem; } .marquee-tile small { font-size:.95rem; } .marquee-tile strong { font-size:2.5rem; }
   .world-note { font-size:2.4rem; }
   /* Cassy sits behind the intro on phones: a soft paper halo keeps the words readable over her */
-  .world-intro .eyebrow, .intro-role, .intro-note, .drag-hint, .works-heading h2, .works-heading span, .world-note { text-shadow:0 0 6px var(--paper),0 0 14px var(--paper),0 0 22px var(--paper); }
-  .name-front { text-shadow:0 0 10px var(--paper),0 0 24px var(--paper); }
+  .world-intro .eyebrow, .intro-role, .intro-note, .drag-hint, .works-heading h2, .works-heading span, .world-note { text-shadow:0 0 10px var(--paper); }
+  .name-front { text-shadow:0 0 14px var(--paper); }
   .cta.ghost { background:var(--paper); }
-  .cassy { left:56%; transform:translateX(-50%); bottom:-3%; height:74%; opacity:calc(var(--cassy-fade,1) * .92); } .cassy figcaption { display:none; }
+  .cassy { left:66%; transform:translateX(-50%); bottom:17%; height:64%; opacity:calc(var(--cassy-fade,1) * .92); } .cassy figcaption { display:none; }
   .minimap { display:none; }
   .story-reader { grid-template-columns:minmax(0,1fr); grid-template-rows:auto auto minmax(0,1fr) auto; grid-template-areas:"top" "nav" "plate" "foot"; padding:.6rem .6rem .7rem; gap:.5rem; }
   .reader-category { font-size:1.6rem; } .reader-category small { display:none; }
@@ -414,7 +414,12 @@ h1 i, h2 i { color:var(--red); font-style:normal; }
 @media (max-width:360px) { .chapter-track { display:none; } .camera-controls button { padding-inline:.35rem; } }
 
 /* ============ Lite mode (phones / low-power): keep the look, drop the expensive parts ============ */
-.lite .grain { display:none; }
+.lite .grain, .lite .dot-grid { display:none; }
+/* phones: no per-frame mask on the animated Cassy; a paper gradient fades her feet instead */
+.lite .cassy { mask-image:none; -webkit-mask-image:none; }
+.lite .cassy::after { content:''; position:absolute; left:-5%; right:-5%; bottom:-1px; height:26%; background:linear-gradient(transparent,var(--paper)); pointer-events:none; }
+.lite .world-backdrop { translate:none; }
+.lite .marquee-tile, .lite .marquee-tile img { transition:none; }
 .lite .panel-grip { display:none; }
 .lite .world-district { cursor:default; }
 .lite .contours g, .lite .cassy-ring, .lite .link-path { animation:none; }

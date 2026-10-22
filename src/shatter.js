@@ -7,7 +7,7 @@ export function shatterScreen({ source, impact, reduced, onImpact, onBurst, onDo
   const W = innerWidth, H = innerHeight, diag = Math.hypot(W, H);
   const c = impact || { x: W / 2, y: H / 2 };
   const rand = (a, b) => a + Math.random() * (b - a);
-  const rays = lite ? 10 : 16, rings = lite ? [.08, .24, .5, 1.25] : [.05, .13, .26, .46, 1.25];
+  const rays = lite ? 8 : 16, rings = lite ? [.09, .28, .6, 1.25] : [.05, .13, .26, .46, 1.25];
   const angle0 = rand(0, Math.PI * 2);
   const angles = Array.from({ length: rays }, (_, i) => angle0 + (i + rand(-.3, .3)) * Math.PI * 2 / rays);
   const vertex = angles.map(a => rings.map((r, k) => { const rr = r * diag * (k === rings.length - 1 ? 1 : rand(.78, 1.22)); const aa = a + (k ? rand(-.08, .08) : 0); return { x: c.x + Math.cos(aa) * rr, y: c.y + Math.sin(aa) * rr }; }));

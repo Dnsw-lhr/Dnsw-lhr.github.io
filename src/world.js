@@ -55,7 +55,7 @@ export function initializeWorld({ stories, sections }) {
   // Buffer the local loop during the conversation, without starting motion.
   if (!reduced.matches && !lite) { video.preload = 'auto'; video.src = video.dataset.src; video.load(); }
   // Phones: Cassy loops as an animated WebP (works on iPhone, no video decoding); a still PNG while paused.
-  const poster = art.querySelector('img'), stillSrc = './assets/cassy-chroma.png', loopSrc = './assets/cassy-loop.webp';
+  const poster = art.querySelector('img'), stillSrc = './assets/cassy-chroma.webp', loopSrc = './assets/cassy-loop.webp';
   if (lite && !reduced.matches) new Image().src = loopSrc;
 
   // Gentle 3D tilt toward the mouse on panels and the intro.
@@ -237,7 +237,7 @@ export function initializeWorld({ stories, sections }) {
     motion.innerHTML = `<span class="icon" aria-hidden="true">${paused || reduced.matches ? '▶' : '❚❚'}</span><span class="label">${label}</span>`; motion.setAttribute('aria-label', label);
     motion.disabled = reduced.matches;
     motion.setAttribute('aria-pressed', String(paused || reduced.matches));
-    if (lite) { const want = stopped || !cassyVisible ? stillSrc : loopSrc; if (poster.getAttribute('src') !== want) poster.src = want; return; }
+    if (lite) { const faded = parseFloat(getComputedStyle(root).getPropertyValue('--cassy-fade') || '1') < .45; const want = stopped || !cassyVisible || faded ? stillSrc : loopSrc; if (poster.getAttribute('src') !== want) poster.src = want; return; }
     if (stopped || artFailed || !cassyVisible) { video.pause(); art.classList.remove('video-ready'); return; }
     if (!video.getAttribute('src')) video.src = video.dataset.src;
     if (!video.paused || pendingPlay) return;
@@ -260,6 +260,7 @@ export function initializeWorld({ stories, sections }) {
   motion.addEventListener('click', () => { paused = !paused; sfx.play('toggle'); syncMotion(); });
   video.addEventListener('error', () => { artFailed = true; syncMotion(); });
   reduced.addEventListener('change', syncMotion);
+  root.addEventListener('cassyfade', syncMotion);
   document.addEventListener('visibilitychange', () => { if (document.hidden) content.querySelectorAll('video').forEach(item => item.pause()); syncMotion(); });
 
   // A small label that trails the mouse and says what a click or drag will do.

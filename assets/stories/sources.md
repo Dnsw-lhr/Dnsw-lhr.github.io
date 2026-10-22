@@ -29,3 +29,4 @@ October 22 additions:
 - assets/sfx/shatter-impact.mp3, shatter-explosion.mp3: cut from the owner-supplied ULTRAKILL jackhammer SFX (0:05.55 and 0:08.56).
 
 - assets/cassy-loop.webp: animated WebP made from cassy-chroma.webm (transparency kept, 420px, 15fps) for phones.
+- October 22: story images and Cassy still converted to WebP (max 1600px, quality 82); originals kept but no longer served. cassy-loop.webp re-encoded at 380px / 12fps.
